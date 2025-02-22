@@ -1,14 +1,12 @@
-/*
-#include <iostream>
-#include <vector>
-#define X 6
-#define Y 3
-void main() {
+#include "tablero.h"
+
+void inicioTablero(char& botellas[X][Y]) {
 	srand(time(NULL));
 	char liquids[4]{ 'X', 'O', '#', 'S' };
 	short iLiquids = 0;
 	short posRand = 0;
-	char botellas[X][Y];
+
+
 	for (int i = 0; i < Y; i++) {
 		for (int j = 0; j < X; j++)
 		{
@@ -25,7 +23,12 @@ void main() {
 		posRand = rand() % 6;
 		botellas[posRand][0] = liquids[iLiquids];
 	}
-	iLiquids = 0;
+
+}
+
+void renderTablero(char& botellas[X][Y]) {
+	short iLiquids = 0;
+
 	for (int i = 0; i < X; i++)
 	{
 		for (int j = 0; j < X; j++)
@@ -48,16 +51,4 @@ void main() {
 			iLiquids++;
 		}
 	}
-}
-*/
-#include <iostream>
-#include "menu.h"
-#include "tablero.h"
-#include "gamePlay.h"
-
-void main() {
-	char botellas[X][Y];
-
-	menu(botellas);
-	
 }
