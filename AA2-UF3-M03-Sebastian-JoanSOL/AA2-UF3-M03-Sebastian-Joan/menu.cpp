@@ -8,9 +8,8 @@ void scores() {
 
 }
 
-void menu(char& botellas[X][Y]) {
+void menu(char botellas[X][Y]) {
 
-	botellas[X][Y] = '2';
 	short choice;
 	bool menu = false;
 

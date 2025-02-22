@@ -1,6 +1,6 @@
 #include "tablero.h"
 
-void inicioTablero(char& botellas[X][Y]) {
+void inicioTablero(char botellas[X][Y]) {
 	srand(time(NULL));
 	char liquids[4]{ 'X', 'O', '#', 'S' };
 	short iLiquids = 0;
@@ -26,7 +26,7 @@ void inicioTablero(char& botellas[X][Y]) {
 
 }
 
-void renderTablero(char& botellas[X][Y]) {
+void renderTablero(char botellas[X][Y]) {
 	short iLiquids = 0;
 
 	for (int i = 0; i < X; i++)
