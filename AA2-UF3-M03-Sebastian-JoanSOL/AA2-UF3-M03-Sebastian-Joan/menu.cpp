@@ -4,7 +4,7 @@ void scores() {
 
 	std::cout << "------ HIGHSCORES ------" << std::endl;
 	std::cout << std::endl;
-	std::cout << "logica mostrar puntuaciones" << std::endl;
+	
 
 }
 

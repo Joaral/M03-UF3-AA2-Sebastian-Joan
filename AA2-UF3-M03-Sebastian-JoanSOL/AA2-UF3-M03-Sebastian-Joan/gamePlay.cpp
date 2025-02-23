@@ -5,7 +5,10 @@
 //ver score
 
 void gamePlay(char botellas[X][Y]) {
-	
+
+	std::string userName;
+	std::ofstream saveFile("scores.wcs", std::ios::out | std::ios::binary);
+
 	bool gameOver = false;
 	short botellaOrigen = 0;
 	short botellaDestino = 0;
@@ -95,9 +98,7 @@ void gamePlay(char botellas[X][Y]) {
 				movimientos -= 1;
 			}
 
-		} while (!checkBotellas);
-
-		system("cls");
+		} while (!checkBotellas);		
 
 		char casilla;
 
@@ -162,14 +163,45 @@ void gamePlay(char botellas[X][Y]) {
 
 		if (botellasLlenas == 6) {
 
-			std::cout << "HAS GANADO! nombre equis de " << puntuacion<< std::endl;
+			std::cout << "HAS GANADO!" <<  ", con una puntuacion de: " << puntuacion << ", cual es tu nombre?" << std::endl;
+			std::cout << ">> ";
+			std::cin.ignore();
+			std::getline(std::cin, userName);
+			
+			std::cout << std::endl;
+
+			//NOTA PARA JOAN -> tuve que usar uint64_t por que el size_t me estaba dando problemas a mi, no se si es algo de mi pc pero intentalo con size_t a ver si no te da problemas xd
+			uint64_t size = userName.size();
+
+			saveFile.write(reinterpret_cast<char*>(&size), sizeof(uint64_t));
+			saveFile.write(userName.c_str(), size);
+			saveFile.write(reinterpret_cast<char*>(&puntuacion), sizeof(int));
+			saveFile.close();
+
+			system("pause");	
 			gameOver = true;
 		}
 		else if (movimientos == 0) {
-			std::cout << "HAS PERDIDO :( ,te quedaste sin movimientos, suerte la proxima!" << std::endl;
+			std::cout << "HAS PERDIDO :(" << ", con una puntuacion de: " << puntuacion << ", cual es tu nombre?" << std::endl;
+			std::cout << ">> ";
+			std::cin.ignore();
+			std::getline(std::cin, userName);
+
+			std::cout << std::endl;
+
+			uint64_t size = userName.size();
+
+			saveFile.write(reinterpret_cast<char*>(&size), sizeof(uint64_t));
+			saveFile.write(userName.c_str(), size);
+			saveFile.write(reinterpret_cast<char*>(&puntuacion), sizeof(int));
+			saveFile.close();
+
+
+			system("pause");
 			gameOver = true;
 		}
 
+		system("cls");
 
 	} while (!gameOver);
 }
