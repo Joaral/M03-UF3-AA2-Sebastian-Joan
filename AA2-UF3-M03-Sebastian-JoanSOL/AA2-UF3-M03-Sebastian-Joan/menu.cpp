@@ -38,13 +38,13 @@ void scores() {
 
 		// Lee la puntuación
 		if (!loadFile.read(reinterpret_cast<char*>(&puntuacion), sizeof(int))) {
-			std::cout << "Error al leer la puntuación." << std::endl;
+			std::cout << "Error al leer la puntuacion." << std::endl;
 			leyendo = false;
 			break; // Salimos si hubo un error al leer la puntuación
 		}
 
 		// Muestra el nombre del usuario y la puntuación
-		std::cout << userName << " - Puntuación: " << puntuacion << std::endl;
+		std::cout << userName << " - Puntuacion: " << puntuacion << std::endl;
 	}
 
 	loadFile.close();

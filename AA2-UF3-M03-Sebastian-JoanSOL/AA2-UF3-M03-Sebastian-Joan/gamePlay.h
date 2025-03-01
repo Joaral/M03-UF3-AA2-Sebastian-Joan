@@ -2,6 +2,7 @@
 #include "tablero.h"
 #include <string>
 #include <fstream>
+#include <vector>
 #define X 6
 #define Y 3
 

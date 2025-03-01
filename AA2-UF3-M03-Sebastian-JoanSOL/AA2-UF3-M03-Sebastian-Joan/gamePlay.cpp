@@ -10,6 +10,8 @@ void gamePlay(char botellas[X][Y]) {
 	//Variables para el guardado de puntuaciones
 	std::string userName;
 	std::ofstream saveFile("scores.wcs", std::ios::app | std::ios::binary);
+	std::vector<std::string> savedNames;
+	std::vector<int> savedScores;
 
 	//Variables para el gameplay
 	bool gameOver = false;
@@ -215,22 +217,120 @@ void gamePlay(char botellas[X][Y]) {
 			
 			std::cout << std::endl;
 
-			//SISTEMA PARA GUARADR PUNTUACIONES
-			
-			//NOTA PARA MARTÍ -> tuvimos que usar uint64_t por que el size_t no nos lee corecatmente los user_name, seguramente sea por el tamaño por el que los guarda, y investigando hemos encontrado este otro formato que si funciona.
-			
-			//Guardamos el tamaño del nombre de usuario
-			std::ofstream saveFile("scores.wcs", std::ios::app | std::ios::binary);
-			uint64_t size = userName.size();
+			std::ifstream loadFile("scores.wcs", std::ios::in | std::ios::binary);
+			bool leyendo = true; // Usamos 'leyendo' para controlar el bucle
+			bool found = false;
 
-			//Escribimos el nombre del usuario y la puntuacion del usuario
-			saveFile.write(reinterpret_cast<char*>(&size), sizeof(uint64_t));
-			saveFile.write(userName.c_str(), size);
-			saveFile.write(reinterpret_cast<char*>(&puntuacion), sizeof(int));
-			saveFile.close();
+			if (!loadFile.is_open()) {
+				std::cout << "Error al abrir el archivo de puntuaciones o no hay puntuaciones guardadas." << std::endl;
+				return;
+			}
 
-			system("pause");	
-			gameOver = true;
+			while (leyendo) {
+				//NOTA PARA MARTÍ -> tuvimos que usar uint64_t por que el size_t no nos lee corecatmente los user_name, seguramente sea por el tamaño por el que los guarda, y investigando hemos encontrado este otro formato que si funciona.
+				uint64_t fileSize = 0;
+				std::string fileUsername;
+				int fileScore = 0;
+
+				// Lee el tamaño del nombre del usuario
+				if (!loadFile.read(reinterpret_cast<char*>(&fileSize), sizeof(uint64_t))) {
+					// Si no se puede leer más datos, terminamos la lectura
+					leyendo = false;
+					gameOver = true;
+					break; // Salimos del bucle si no se puede leer el tamaño
+				}
+
+				// Reservamos el espacio para el nombre del usuario
+				fileUsername.resize(fileSize);
+
+				// Lee el nombre del usuario
+				if (!loadFile.read(&fileUsername[0], fileSize)) {
+					std::cout << "Error al leer el nombre del usuario." << std::endl;
+					leyendo = false;
+					break; // Salimos si hubo un error al leer el nombre
+				}
+
+				// Lee la puntuación
+				if (!loadFile.read(reinterpret_cast<char*>(&fileScore), sizeof(int))) {
+					std::cout << "Error al leer la puntuacion." << std::endl;
+					leyendo = false;
+					break; // Salimos si hubo un error al leer la puntuación
+				}
+
+				if (fileUsername == userName) {
+
+					if (puntuacion > fileScore) {
+
+						std::cout << "Hiciste una puntuacion mas alta, felicidades!!" << std::endl;
+
+						fileScore = puntuacion;
+						fileUsername = userName;
+						system("pause");
+
+					}
+					else {
+
+						std::cout << "Tienes una puntuacion mas alta ya guardada..." << std::endl;
+						system("pause");
+
+						fileUsername = userName;
+						leyendo = false;
+						gameOver = true;
+
+					}
+
+					found = true;
+
+				}
+
+
+
+				savedNames.push_back(fileUsername);
+				savedScores.push_back(fileScore);
+
+			}
+
+			loadFile.close();
+
+			if (found == false) {
+				//Guardamos el tamaño del nombre de usuario
+				std::ofstream saveFile("scores.wcs", std::ios::app | std::ios::binary);
+				uint64_t size = userName.size();
+
+				//Escribimos el nombre del usuario y la puntuacion del usuario
+				saveFile.write(reinterpret_cast<char*>(&size), sizeof(uint64_t));
+				saveFile.write(userName.c_str(), size);
+				saveFile.write(reinterpret_cast<char*>(&puntuacion), sizeof(int));
+				saveFile.close();
+
+				system("pause");
+
+				leyendo = false;
+				gameOver = true;
+
+			}
+			else {
+				//Guardamos el tamaño del nombre de usuario
+				std::ofstream saveFile("scores.wcs", std::ios::trunc | std::ios::binary);
+
+				if (!saveFile.is_open()) {
+					std::cout << "ERROR: no encontre el archivo para guardar!" << std::endl;
+				}
+
+				for (uint64_t i = 0; i < savedNames.size(); i++) {
+
+					uint64_t size = savedNames[i].size();
+
+					//Escribimos el nombre del usuario y la puntuacion del usuario
+					saveFile.write(reinterpret_cast<char*>(&size), sizeof(uint64_t));
+					saveFile.write(savedNames[i].c_str(), size);
+					saveFile.write(reinterpret_cast<char*>(&savedScores[i]), sizeof(int));
+
+
+				}
+				saveFile.close();
+			}
+
 		}
 		//Si ya no tiene movimientos el jugador ha perdido
 		else if (movimientos == 0) {
@@ -241,18 +341,115 @@ void gamePlay(char botellas[X][Y]) {
 
 			std::cout << std::endl;
 
-			//Guardamos el tamaño del nombre de usuario
-			uint64_t size = userName.size();
+			std::ifstream loadFile("scores.wcs", std::ios::in | std::ios::binary);
+			bool leyendo = true; // Usamos 'leyendo' para controlar el bucle
+			bool found = false;
 
-			//Escribimos el nombre del usuario y la puntuacion del usuario
-			saveFile.write(reinterpret_cast<char*>(&size), sizeof(uint64_t));
-			saveFile.write(userName.c_str(), size);
-			saveFile.write(reinterpret_cast<char*>(&puntuacion), sizeof(int));
-			saveFile.close();
+			if (!loadFile.is_open()) {
+				std::cout << "Error al abrir el archivo de puntuaciones o no hay puntuaciones guardadas." << std::endl;
+				return;
+			}
+
+			while (leyendo) {
+				//NOTA PARA MARTÍ -> tuvimos que usar uint64_t por que el size_t no nos lee corecatmente los user_name, seguramente sea por el tamaño por el que los guarda, y investigando hemos encontrado este otro formato que si funciona.
+				uint64_t fileSize = 0;
+				std::string fileUsername;
+				int fileScore = 0;
+
+				// Lee el tamaño del nombre del usuario
+				if (!loadFile.read(reinterpret_cast<char*>(&fileSize), sizeof(uint64_t))) {
+					// Si no se puede leer más datos, terminamos la lectura
+					leyendo = false;
+					gameOver = true;
+					break; // Salimos del bucle si no se puede leer el tamaño
+				}
+
+				// Reservamos el espacio para el nombre del usuario
+				fileUsername.resize(fileSize);
+
+				// Lee el nombre del usuario
+				if (!loadFile.read(&fileUsername[0], fileSize)) {
+					std::cout << "Error al leer el nombre del usuario." << std::endl;
+					leyendo = false;
+					break; // Salimos si hubo un error al leer el nombre
+				}
+
+				// Lee la puntuación
+				if (!loadFile.read(reinterpret_cast<char*>(&fileScore), sizeof(int))) {
+					std::cout << "Error al leer la puntuacion." << std::endl;
+					leyendo = false;
+					break; // Salimos si hubo un error al leer la puntuación
+				}
+
+				if (fileUsername == userName) {
+
+					if (puntuacion > fileScore) {
+
+						std::cout << "Hiciste una puntuacion mas alta, felicidades!!" << std::endl;
+
+						fileScore = puntuacion;
+						system("pause");
+
+					}
+					else {
+
+						std::cout << "Tienes una puntuacion mas alta ya guardada..." << std::endl;
+						system("pause");
+
+						leyendo = false;
+						gameOver = true;
+
+					}
+
+					found = true;
+
+				}
+
+				savedNames.push_back(fileUsername);
+				savedScores.push_back(fileScore);
+
+			}
+
+			loadFile.close();
+
+			if (found == false) {
+							//Guardamos el tamaño del nombre de usuario
+				std::ofstream saveFile("scores.wcs", std::ios::app | std::ios::binary);
+				uint64_t size = userName.size();
+
+				//Escribimos el nombre del usuario y la puntuacion del usuario
+				saveFile.write(reinterpret_cast<char*>(&size), sizeof(uint64_t));
+				saveFile.write(userName.c_str(), size);
+				saveFile.write(reinterpret_cast<char*>(&puntuacion), sizeof(int));
+				saveFile.close();
+
+				system("pause");
+
+				leyendo = false;
+				gameOver = true;
+			
+			}
+			else {
+				//Guardamos el tamaño del nombre de usuario
+				std::ofstream saveFile("scores.wcs", std::ios::trunc | std::ios::binary);
+
+				if (!saveFile.is_open()) {
+					std::cout << "ERROR: no encontre el archivo para guardar!" << std::endl;
+				}
+
+				for (uint64_t i = 0; i < savedNames.size(); i++) {
+
+					uint64_t size = savedNames[i].size();
+
+					//Escribimos el nombre del usuario y la puntuacion del usuario
+					saveFile.write(reinterpret_cast<char*>(&size), sizeof(uint64_t));
+					saveFile.write(savedNames[i].c_str(), size);
+					saveFile.write(reinterpret_cast<char*>(&savedScores[i]), sizeof(int));
 
 
-			system("pause");
-			gameOver = true;
+				}
+				saveFile.close();
+			}
 		}
 
 		system("cls");
