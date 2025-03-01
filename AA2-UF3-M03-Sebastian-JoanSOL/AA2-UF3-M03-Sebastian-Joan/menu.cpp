@@ -2,10 +2,44 @@
 
 //funcion para enseñar las puntuaciones
 void scores() {
+	std::ifstream loadFile("scores.wcs", std::ios::in | std::ios::binary);
+	bool leyendo = true;
+
+	if (!loadFile.is_open()) {
+		std::cout << "Error al abrir el archivo de puntuaciones o no hay puntuaciones guardadas." << std::endl;
+		return;
+	}
 
 	std::cout << "------ HIGHSCORES ------" << std::endl;
 	std::cout << std::endl;
-	
+
+	while (leyendo) {
+		uint64_t size = 0;
+		std::string userName(size, ' ');
+		int puntuacion = 0;
+
+		// Lee el tamaño del nombre del usuario
+		if (!loadFile.read(reinterpret_cast<char*>(&size), sizeof(uint64_t))) {
+			leyendo = false;
+		}
+
+		// Lee el nombre del usuario
+		if (!loadFile.read(&userName[0], size)) {
+			std::cout << "Error al leer el nombre del usuario." << std::endl;
+			leyendo = false;
+		}
+
+		// Lee la puntuación
+		if (!loadFile.read(reinterpret_cast<char*>(&puntuacion), sizeof(int))) {
+			std::cout << "Error al leer la puntuación." << std::endl;
+			leyendo = false;
+		}
+
+		// Muestra el nombre del usuario y la puntuación
+		std::cout << userName << " - Puntuación: " << puntuacion << std::endl;
+	}
+
+	loadFile.close();
 
 }
 

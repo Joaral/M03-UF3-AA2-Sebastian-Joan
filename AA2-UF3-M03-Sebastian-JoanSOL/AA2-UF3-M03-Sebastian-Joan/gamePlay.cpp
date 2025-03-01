@@ -9,7 +9,7 @@ void gamePlay(char botellas[X][Y]) {
 	
 	//Variables para el guardado de puntuaciones
 	std::string userName;
-	std::ofstream saveFile("scores.wcs", std::ios::out | std::ios::binary);
+	std::ofstream saveFile("scores.wcs", std::ios::app | std::ios::binary);
 
 	//Variables para el gameplay
 	bool gameOver = false;
@@ -217,7 +217,7 @@ void gamePlay(char botellas[X][Y]) {
 
 			//SISTEMA PARA GUARADR PUNTUACIONES
 			
-			//NOTA PARA JOAN -> tuve que usar uint64_t por que el size_t me estaba dando problemas a mi, no se si es algo de mi pc pero intentalo con size_t a ver si no te da problemas xd
+			//NOTA PARA MARTÍ -> tuvimos que usar uint64_t por que el size_t no nos lee corecatmente los user_name, seguramente sea por el tamaño por el que los guarda, y investigando hemos encontrado este otro formato que si funciona.
 			
 			//Guardamos el tamaño del nombre de usuario
 			uint64_t size = userName.size();
