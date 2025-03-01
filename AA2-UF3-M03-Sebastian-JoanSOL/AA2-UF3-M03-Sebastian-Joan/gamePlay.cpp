@@ -220,6 +220,7 @@ void gamePlay(char botellas[X][Y]) {
 			//NOTA PARA MARTÍ -> tuvimos que usar uint64_t por que el size_t no nos lee corecatmente los user_name, seguramente sea por el tamaño por el que los guarda, y investigando hemos encontrado este otro formato que si funciona.
 			
 			//Guardamos el tamaño del nombre de usuario
+			std::ofstream saveFile("scores.wcs", std::ios::app | std::ios::binary);
 			uint64_t size = userName.size();
 
 			//Escribimos el nombre del usuario y la puntuacion del usuario

@@ -2,8 +2,9 @@
 
 //funcion para enseñar las puntuaciones
 void scores() {
+	
 	std::ifstream loadFile("scores.wcs", std::ios::in | std::ios::binary);
-	bool leyendo = true;
+	bool leyendo = true; // Usamos 'leyendo' para controlar el bucle
 
 	if (!loadFile.is_open()) {
 		std::cout << "Error al abrir el archivo de puntuaciones o no hay puntuaciones guardadas." << std::endl;
@@ -15,24 +16,31 @@ void scores() {
 
 	while (leyendo) {
 		uint64_t size = 0;
-		std::string userName(size, ' ');
+		std::string userName;
 		int puntuacion = 0;
 
 		// Lee el tamaño del nombre del usuario
 		if (!loadFile.read(reinterpret_cast<char*>(&size), sizeof(uint64_t))) {
+			// Si no se puede leer más datos, terminamos la lectura
 			leyendo = false;
+			break; // Salimos del bucle si no se puede leer el tamaño
 		}
+
+		// Reservamos el espacio para el nombre del usuario
+		userName.resize(size);
 
 		// Lee el nombre del usuario
 		if (!loadFile.read(&userName[0], size)) {
 			std::cout << "Error al leer el nombre del usuario." << std::endl;
 			leyendo = false;
+			break; // Salimos si hubo un error al leer el nombre
 		}
 
 		// Lee la puntuación
 		if (!loadFile.read(reinterpret_cast<char*>(&puntuacion), sizeof(int))) {
 			std::cout << "Error al leer la puntuación." << std::endl;
 			leyendo = false;
+			break; // Salimos si hubo un error al leer la puntuación
 		}
 
 		// Muestra el nombre del usuario y la puntuación
@@ -40,6 +48,7 @@ void scores() {
 	}
 
 	loadFile.close();
+	
 
 }
 
